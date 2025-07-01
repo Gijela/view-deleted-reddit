@@ -39,7 +39,7 @@ export const Header = () => {
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="https://github.com/viewdeletedreddit"
+              href="https://github.com/Gijela/view-deleted-reddit"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/70 hover:text-white transition text-sm hidden sm:block"

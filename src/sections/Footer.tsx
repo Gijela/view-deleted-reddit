@@ -32,7 +32,7 @@ export const Footer = () => {
           </nav>
           <div className="flex gap-5 lg:flex-1 lg:justify-end items-center">
             <a
-              href="https://github.com/viewdeletedreddit"
+              href="https://github.com/Gijela/view-deleted-reddit"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/40 hover:text-white transition text-sm"

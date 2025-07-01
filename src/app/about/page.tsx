@@ -134,7 +134,7 @@ export default function AboutPage() {
                 <strong>Email:</strong> <a href="mailto:hello@viewdeletedreddit.com" className="text-purple-400 hover:text-purple-300">hello@viewdeletedreddit.com</a>
               </p>
               <p className="text-white/80">
-                <strong>GitHub:</strong> <a href="https://github.com/viewdeletedreddit" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300">github.com/viewdeletedreddit</a>
+                <strong>GitHub:</strong> <a href="https://github.com/Gijela/view-deleted-reddit" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300">github.com/viewdeletedreddit</a>
               </p>
               <p className="text-white/80">
                 <strong>Response Time:</strong> We typically respond within 24 hours
