@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { twMerge } from "tailwind-merge";
 import "@/styles/globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://viewdeletedreddit.com'),
@@ -112,6 +113,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        {process.env.NODE_ENV === "production" && <GoogleAnalytics />}
       </body>
     </html>
   );
