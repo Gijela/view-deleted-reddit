@@ -83,6 +83,9 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#8c45ff" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
 
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7300633533186941"
+     crossorigin="anonymous"></script>
+
         {/* Structured Data */}
         <script
           type="application/ld+json"
