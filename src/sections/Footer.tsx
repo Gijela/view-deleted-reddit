@@ -1,5 +1,6 @@
-import { Logo, SocialX } from "@/assets";
 import Link from "next/link";
+import Image from "next/image";
+import Logo from "@/assets/logo.svg";
 
 const navItems = [
   { href: "/guide", title: "Guide" },
@@ -16,7 +17,7 @@ export const Footer = () => {
       <div className="container">
         <div className="flex flex-col lg:flex-row lg:items-center gap-8">
           <div className="flex gap-2 items-center lg:flex-1">
-            <Logo className="size-6" />
+            <Image src={Logo} alt="Logo" className="size-6" />
             <span className="font-medium">ViewDeletedReddit</span>
           </div>
           <nav className="flex flex-col lg:flex-row gap-5 lg:gap-7 lg:flex-1 lg:justify-center">

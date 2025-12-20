@@ -1,5 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
+// Cloudflare Pages Functions
+// This will handle /api/lookup requests
+
+interface Env {
+  // Add any environment variables here
+}
 
 // Types for our API responses
 interface RedditPost {
@@ -45,10 +49,8 @@ interface APIResponse {
 
 // Helper function to detect if input is a Reddit URL or username
 function parseQuery(query: string): { type: 'url' | 'username'; value: string; postId?: string; subreddit?: string } {
-  // Clean the query
   const cleanQuery = query.trim();
   
-  // Check if it's a Reddit URL
   const redditUrlRegex = /(?:https?:\/\/)?(?:www\.)?reddit\.com\/r\/([^\/]+)\/comments\/([^\/]+)/i;
   const match = cleanQuery.match(redditUrlRegex);
   
@@ -61,29 +63,11 @@ function parseQuery(query: string): { type: 'url' | 'username'; value: string; p
     };
   }
   
-  // Otherwise treat as username (remove u/ prefix if present)
   const username = cleanQuery.replace(/^u\//, '');
   return {
     type: 'username',
     value: username
   };
-}
-
-// Query Pushshift API (Note: Pushshift is currently down, this is for future use)
-async function queryPushshift(queryInfo: ReturnType<typeof parseQuery>): Promise<{ posts: RedditPost[]; comments: RedditComment[] }> {
-  const posts: RedditPost[] = [];
-  const comments: RedditComment[] = [];
-  
-  try {
-    // Note: Pushshift API is currently unavailable
-    // This is a placeholder for when it becomes available again
-    // For now, we'll return empty results
-    console.log('Pushshift query attempted for:', queryInfo);
-  } catch (error) {
-    console.error('Pushshift API error:', error);
-  }
-  
-  return { posts, comments };
 }
 
 // Query Wayback Machine for archived Reddit content
@@ -93,36 +77,37 @@ async function queryWaybackMachine(queryInfo: ReturnType<typeof parseQuery>): Pr
   
   try {
     if (queryInfo.type === 'url') {
-      // Query Wayback Machine for archived versions of the Reddit URL
       const waybackUrl = `https://web.archive.org/cdx/search/cdx?url=${encodeURIComponent(queryInfo.value)}&output=json&limit=10`;
       
-      const response = await axios.get(waybackUrl, {
-        timeout: 10000
+      const response = await fetch(waybackUrl, {
+        signal: AbortSignal.timeout(10000)
       });
       
-      if (response.data && response.data.length > 1) {
-        // Skip the header row and process results
-        const archives = response.data.slice(1);
+      if (response.ok) {
+        const data = await response.json();
         
-        for (const archive of archives.slice(0, 3)) { // Limit to 3 most recent archives
-          const timestamp = archive[1];
-          const archivedUrl = `https://web.archive.org/web/${timestamp}/${queryInfo.value}`;
+        if (data && data.length > 1) {
+          const archives = data.slice(1);
           
-          // Create a mock post entry for the archived URL
-          posts.push({
-            id: `wayback_${timestamp}`,
-            title: `Archived Reddit Post (${new Date(timestamp.slice(0, 4) + '-' + timestamp.slice(4, 6) + '-' + timestamp.slice(6, 8)).toLocaleDateString()})`,
-            selftext: `This post was archived by the Wayback Machine. View the archived version at: ${archivedUrl}`,
-            author: '[archived]',
-            created_utc: parseInt(timestamp),
-            subreddit: queryInfo.subreddit || 'unknown',
-            url: archivedUrl,
-            score: 0,
-            num_comments: 0,
-            permalink: archivedUrl,
-            is_deleted: true,
-            source: 'wayback'
-          });
+          for (const archive of archives.slice(0, 3)) {
+            const timestamp = archive[1];
+            const archivedUrl = `https://web.archive.org/web/${timestamp}/${queryInfo.value}`;
+            
+            posts.push({
+              id: `wayback_${timestamp}`,
+              title: `Archived Reddit Post (${new Date(timestamp.slice(0, 4) + '-' + timestamp.slice(4, 6) + '-' + timestamp.slice(6, 8)).toLocaleDateString()})`,
+              selftext: `This post was archived by the Wayback Machine. View the archived version at: ${archivedUrl}`,
+              author: '[archived]',
+              created_utc: parseInt(timestamp),
+              subreddit: queryInfo.subreddit || 'unknown',
+              url: archivedUrl,
+              score: 0,
+              num_comments: 0,
+              permalink: archivedUrl,
+              is_deleted: true,
+              source: 'wayback'
+            });
+          }
         }
       }
     }
@@ -133,19 +118,18 @@ async function queryWaybackMachine(queryInfo: ReturnType<typeof parseQuery>): Pr
   return { posts, comments };
 }
 
-// Mock data generator for demonstration (since real APIs may be unavailable)
+// Mock data generator for demonstration
 function generateMockData(queryInfo: ReturnType<typeof parseQuery>): { posts: RedditPost[]; comments: RedditComment[] } {
   const posts: RedditPost[] = [];
   const comments: RedditComment[] = [];
   
   if (queryInfo.type === 'url') {
-    // Generate mock deleted post
     posts.push({
       id: 'mock_post_1',
       title: '[RECOVERED] Example deleted Reddit post',
       selftext: 'This is an example of what a recovered deleted post might look like. The original content was removed by the user or moderators, but was preserved in our archives.',
       author: '[deleted]',
-      created_utc: Date.now() / 1000 - 86400, // 1 day ago
+      created_utc: Date.now() / 1000 - 86400,
       subreddit: queryInfo.subreddit || 'AskReddit',
       url: queryInfo.value,
       score: 42,
@@ -155,13 +139,12 @@ function generateMockData(queryInfo: ReturnType<typeof parseQuery>): { posts: Re
       source: 'pushshift'
     });
     
-    // Generate mock deleted comments
     for (let i = 1; i <= 3; i++) {
       comments.push({
         id: `mock_comment_${i}`,
         body: `[RECOVERED] This is an example of a recovered deleted comment #${i}. The original comment was removed but preserved in archives.`,
         author: i === 1 ? '[deleted]' : `user${i}`,
-        created_utc: Date.now() / 1000 - (3600 * i), // Hours ago
+        created_utc: Date.now() / 1000 - (3600 * i),
         subreddit: queryInfo.subreddit || 'AskReddit',
         score: 10 - i,
         parent_id: i === 1 ? `t3_${queryInfo.postId}` : `t1_mock_comment_${i-1}`,
@@ -172,7 +155,6 @@ function generateMockData(queryInfo: ReturnType<typeof parseQuery>): { posts: Re
       });
     }
   } else {
-    // Generate mock user data
     for (let i = 1; i <= 2; i++) {
       posts.push({
         id: `mock_user_post_${i}`,
@@ -210,24 +192,25 @@ function generateMockData(queryInfo: ReturnType<typeof parseQuery>): { posts: Re
   return { posts, comments };
 }
 
-// Main API handler
-export async function POST(request: NextRequest) {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
-    const body = await request.json();
+    const body = await context.request.json() as { query: string };
     const { query } = body;
     
     if (!query || typeof query !== 'string') {
-      return NextResponse.json({
+      return new Response(JSON.stringify({
         success: false,
         error: 'Query parameter is required and must be a string'
-      }, { status: 400 });
+      }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
     
     const queryInfo = parseQuery(query);
     
     // Run queries in parallel
-    const [pushshiftResults, waybackResults] = await Promise.all([
-      queryPushshift(queryInfo),
+    const [waybackResults] = await Promise.all([
       queryWaybackMachine(queryInfo)
     ]);
     
@@ -235,8 +218,8 @@ export async function POST(request: NextRequest) {
     const mockResults = generateMockData(queryInfo);
     
     // Combine and deduplicate results
-    const allPosts = [...pushshiftResults.posts, ...waybackResults.posts, ...mockResults.posts];
-    const allComments = [...pushshiftResults.comments, ...waybackResults.comments, ...mockResults.comments];
+    const allPosts = [...waybackResults.posts, ...mockResults.posts];
+    const allComments = [...waybackResults.comments, ...mockResults.comments];
     
     // Remove duplicates based on ID
     const uniquePosts = allPosts.filter((post, index, self) => 
@@ -257,33 +240,47 @@ export async function POST(request: NextRequest) {
       }
     };
     
-    return NextResponse.json(response);
+    return new Response(JSON.stringify(response), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
     
   } catch (error) {
     console.error('API Error:', error);
-    return NextResponse.json({
+    return new Response(JSON.stringify({
       success: false,
       error: 'Internal server error'
-    }, { status: 500 });
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
-}
+};
 
-// Handle GET requests for testing
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const query = searchParams.get('query');
+export const onRequestGet: PagesFunction<Env> = async (context) => {
+  const url = new URL(context.request.url);
+  const query = url.searchParams.get('query');
   
   if (!query) {
-    return NextResponse.json({
+    return new Response(JSON.stringify({
       success: false,
       error: 'Query parameter is required'
-    }, { status: 400 });
+    }), { 
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
   
   // Redirect to POST handler
-  return POST(new NextRequest(request.url, {
-    method: 'POST',
-    body: JSON.stringify({ query }),
-    headers: { 'Content-Type': 'application/json' }
-  }));
-}
+  return onRequestPost({
+    ...context,
+    request: new Request(context.request.url, {
+      method: 'POST',
+      body: JSON.stringify({ query }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+  });
+};
+

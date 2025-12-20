@@ -1,5 +1,7 @@
-import { Logo, MenuIcon } from "@/assets";
 import Link from "next/link";
+import Image from "next/image";
+import Logo from "@/assets/logo.svg";
+import MenuIcon from "@/assets/icon-menu.svg";
 
 const navItems = [
   { href: "/guide", title: "Guide" },
@@ -18,7 +20,7 @@ export const Header = () => {
           <div className="absolute inset-0 backdrop-blur -z-10 hidden md:block"></div>
           <div className="flex items-center space-x-3">
             <div className="inline-flex items-center justify-center size-10 border border-white/15 rounded-lg">
-              <Logo className="size-8" />
+              <Image src={Logo} alt="Logo" className="size-8" />
             </div>
             <Link href="/" className="text-white font-semibold text-lg hidden sm:block">
               ViewDeletedReddit
@@ -46,7 +48,7 @@ export const Header = () => {
             >
               GitHub
             </a>
-            <MenuIcon className="md:hidden" />
+            <Image src={MenuIcon} alt="Menu" className="md:hidden" />
           </div>
         </div>
       </div>

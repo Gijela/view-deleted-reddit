@@ -6,28 +6,33 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pages:build": "next build",
+    "pages:deploy": "pnpm build && pnpm wrangler pages deploy out --project-name=view-deleted-reddit",
+    "preview": "pnpm wrangler pages dev out"
   },
   "dependencies": {
     "@dotlottie/react-player": "^1.6.19",
     "@lottiefiles/dotlottie-react": "^0.8.7",
     "axios": "^1.10.0",
     "framer-motion": "^11.3.28",
-    "next": "14.2.5",
+    "next": "16.1.0",
     "react": "^18",
     "react-dom": "^18",
     "sharp": "^0.33.4"
   },
   "devDependencies": {
+    "@cloudflare/workerd-darwin-arm64": "^1.20251213.0",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5",
+    "eslint-config-next": "14.2.35",
     "postcss": "^8",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.56.0"
   }
 }

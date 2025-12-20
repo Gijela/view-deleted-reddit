@@ -2,9 +2,7 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+/.pnpm-store
 
 # testing
 /coverage
@@ -12,6 +10,8 @@
 # next.js
 /.next/
 /out/
+.vercel
+.worker-next/
 
 # production
 /build
@@ -27,6 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -35,5 +36,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# env
-.env
+# wrangler
+.wrangler/
+.dev.vars
+.worker-next/
