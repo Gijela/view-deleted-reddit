@@ -1,9 +1,16 @@
 // Cloudflare Pages Functions
 // This will handle /api/lookup requests
+import { getPaidSessionQuery, retrieveCheckoutSession, type StripeEnv } from '../_lib/stripe';
 
-interface Env {
-  // Add any environment variables here
+interface Env extends StripeEnv {
 }
+
+interface PagesContext<Env> {
+  request: Request;
+  env: Env;
+}
+
+type PagesHandler<Env> = (context: PagesContext<Env>) => Promise<Response> | Response;
 
 // Types for our API responses
 interface RedditPost {
@@ -192,95 +199,84 @@ function generateMockData(queryInfo: ReturnType<typeof parseQuery>): { posts: Re
   return { posts, comments };
 }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  try {
-    const body = await context.request.json() as { query: string };
-    const { query } = body;
-    
-    if (!query || typeof query !== 'string') {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Query parameter is required and must be a string'
-      }), { 
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+function jsonResponse(body: unknown, init?: ResponseInit) {
+  return new Response(JSON.stringify(body), {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...init?.headers,
+    },
+  });
+}
+
+async function runLookup(query: string): Promise<APIResponse> {
+  const queryInfo = parseQuery(query);
+
+  const [waybackResults] = await Promise.all([
+    queryWaybackMachine(queryInfo)
+  ]);
+
+  const mockResults = generateMockData(queryInfo);
+
+  const allPosts = [...waybackResults.posts, ...mockResults.posts];
+  const allComments = [...waybackResults.comments, ...mockResults.comments];
+
+  const uniquePosts = allPosts.filter((post, index, self) =>
+    index === self.findIndex(p => p.id === post.id)
+  );
+  const uniqueComments = allComments.filter((comment, index, self) =>
+    index === self.findIndex(c => c.id === comment.id)
+  );
+
+  return {
+    success: true,
+    data: {
+      posts: uniquePosts,
+      comments: uniqueComments,
+      total_found: uniquePosts.length + uniqueComments.length,
+      query_type: queryInfo.type,
+      query_value: queryInfo.value
     }
-    
-    const queryInfo = parseQuery(query);
-    
-    // Run queries in parallel
-    const [waybackResults] = await Promise.all([
-      queryWaybackMachine(queryInfo)
-    ]);
-    
-    // For demonstration, also include mock data
-    const mockResults = generateMockData(queryInfo);
-    
-    // Combine and deduplicate results
-    const allPosts = [...waybackResults.posts, ...mockResults.posts];
-    const allComments = [...waybackResults.comments, ...mockResults.comments];
-    
-    // Remove duplicates based on ID
-    const uniquePosts = allPosts.filter((post, index, self) => 
-      index === self.findIndex(p => p.id === post.id)
-    );
-    const uniqueComments = allComments.filter((comment, index, self) => 
-      index === self.findIndex(c => c.id === comment.id)
-    );
-    
-    const response: APIResponse = {
-      success: true,
-      data: {
-        posts: uniquePosts,
-        comments: uniqueComments,
-        total_found: uniquePosts.length + uniqueComments.length,
-        query_type: queryInfo.type,
-        query_value: queryInfo.value
-      }
-    };
-    
-    return new Response(JSON.stringify(response), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-    
+  };
+}
+
+export const onRequestPost: PagesHandler<Env> = async (context) => {
+  try {
+    const body = await context.request.json() as { session_id?: unknown };
+    const sessionId = typeof body.session_id === 'string' ? body.session_id.trim() : '';
+
+    if (!sessionId) {
+      return jsonResponse({
+        success: false,
+        error: 'Paid Stripe session is required'
+      }, { status: 402 });
+    }
+
+    const session = await retrieveCheckoutSession(context.env, sessionId);
+    const query = getPaidSessionQuery(session);
+
+    if (!query) {
+      return jsonResponse({
+        success: false,
+        error: 'Payment is incomplete or search query is missing'
+      }, { status: 402 });
+    }
+
+    return jsonResponse(await runLookup(query));
+
   } catch (error) {
     console.error('API Error:', error);
-    return new Response(JSON.stringify({
+    return jsonResponse({
       success: false,
       error: 'Internal server error'
-    }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    }, { status: 500 });
   }
 };
 
-export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const url = new URL(context.request.url);
-  const query = url.searchParams.get('query');
-  
-  if (!query) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Query parameter is required'
-    }), { 
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
-  // Redirect to POST handler
-  return onRequestPost({
-    ...context,
-    request: new Request(context.request.url, {
-      method: 'POST',
-      body: JSON.stringify({ query }),
-      headers: { 'Content-Type': 'application/json' }
-    })
-  });
+export const onRequestGet: PagesHandler<Env> = async () => {
+  return jsonResponse({
+    success: false,
+    error: 'Method not allowed'
+  }, { status: 405 });
 };
 

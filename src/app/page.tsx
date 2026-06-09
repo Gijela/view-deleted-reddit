@@ -3,48 +3,15 @@ import { useState } from "react";
 import { Footer } from "@/sections/Footer";
 import { Header } from "@/sections/Header";
 import { Hero } from "@/sections/Hero";
-import { SearchResults } from "@/components/SearchResults";
 import { SearchingAnimation } from "@/components/LoadingSpinner";
 
-interface RedditPost {
-  id: string;
-  title: string;
-  selftext: string;
-  author: string;
-  created_utc: number;
-  subreddit: string;
-  url: string;
-  score: number;
-  num_comments: number;
-  permalink: string;
-  is_deleted: boolean;
-  source: 'pushshift' | 'wayback' | 'reddit';
-}
-
-interface RedditComment {
-  id: string;
-  body: string;
-  author: string;
-  created_utc: number;
-  subreddit: string;
-  score: number;
-  parent_id: string;
-  link_id: string;
-  permalink: string;
-  is_deleted: boolean;
-  source: 'pushshift' | 'wayback' | 'reddit';
-}
-
-interface SearchData {
-  posts: RedditPost[];
-  comments: RedditComment[];
-  total_found: number;
-  query_type: 'url' | 'username';
-  query_value: string;
+interface CheckoutResponse {
+  success: boolean;
+  url?: string;
+  error?: string;
 }
 
 export default function Home() {
-  const [searchResults, setSearchResults] = useState<SearchData | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +20,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await fetch('/api/lookup', {
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,23 +28,16 @@ export default function Home() {
         body: JSON.stringify({ query }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as CheckoutResponse;
 
-      if (data.success) {
-        setSearchResults(data.data);
-        // Scroll to results
-        setTimeout(() => {
-          const resultsElement = document.getElementById('search-results');
-          if (resultsElement) {
-            resultsElement.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
+      if (data.success && data.url) {
+        window.location.href = data.url;
       } else {
-        setError(data.error || 'Search failed');
+        setError(data.error || 'Unable to start checkout');
       }
     } catch (err) {
       setError('Network error occurred');
-      console.error('Search error:', err);
+      console.error('Checkout error:', err);
     } finally {
       setIsSearching(false);
     }
@@ -111,21 +71,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* Search Results */}
-      {searchResults && !isSearching && (
-        <div id="search-results" className="bg-black">
-          <SearchResults
-            posts={searchResults.posts}
-            comments={searchResults.comments}
-            queryType={searchResults.query_type}
-            queryValue={searchResults.query_value}
-            totalFound={searchResults.total_found}
-          />
-        </div>
-      )}
-
       {/* Show info section only when no search results */}
-      {!searchResults && !isSearching && (
+      {!isSearching && (
         <>
           <section className="py-12 md:py-20 bg-black">
             <div className="container mx-auto px-4">

@@ -4,17 +4,17 @@ import { Header } from "@/sections/Header";
 import { Footer } from "@/sections/Footer";
 
 export const metadata: Metadata = {
-  title: "Ultimate Guide to View Deleted Reddit Posts in 2024 - ViewDeletedReddit",
+  title: "Ultimate Guide to View Deleted Reddit Posts - ViewDeletedReddit",
   description: "Complete guide on how to view deleted Reddit posts and comments using Pushshift, Wayback Machine, and other tools. Step-by-step instructions included.",
   keywords: "view deleted reddit posts, see deleted reddit comments, reddit archive, pushshift, wayback machine, reddit recovery",
   openGraph: {
-    title: "Ultimate Guide to View Deleted Reddit Posts in 2024",
+    title: "Ultimate Guide to View Deleted Reddit Posts",
     description: "Complete guide on how to view deleted Reddit posts and comments using Pushshift, Wayback Machine, and other tools.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ultimate Guide to View Deleted Reddit Posts in 2024",
+    title: "Ultimate Guide to View Deleted Reddit Posts",
     description: "Complete guide on how to view deleted Reddit posts and comments using Pushshift, Wayback Machine, and other tools.",
   },
 };
@@ -37,12 +37,12 @@ export default function UltimateGuidePage() {
                 </span>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                Ultimate Guide to View Deleted Reddit Posts in 2024
+                Ultimate Guide to View Deleted Reddit Posts
               </h1>
               <div className="flex items-center gap-6 text-white/60 mb-8">
                 <span>July 1, 2024</span>
                 <span>8 min read</span>
-                <span>Updated for 2024</span>
+                <span>Updated for 2026</span>
               </div>
               <p className="text-xl text-white/80 leading-relaxed">
                 Discover the most effective methods to recover and view deleted Reddit posts and comments using various tools and techniques. This comprehensive guide covers everything from basic methods to advanced techniques.
@@ -181,13 +181,21 @@ export default function UltimateGuidePage() {
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold mb-8">Related Articles</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                <Link href="/blog/reddit-archive-tools-comparison" className="group bg-white/5 border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-colors">
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-300">Reddit Archive Tools Comparison</h3>
-                  <p className="text-white/70 text-sm">Compare different tools for Reddit content recovery</p>
+                <Link href="/blog/how-to-see-deleted-reddit-posts-2026" className="group bg-white/5 border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-colors">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-300">How to See Deleted Reddit Posts in 2026</h3>
+                  <p className="text-white/70 text-sm">Use the current workflow for deleted Reddit recovery</p>
+                </Link>
+                <Link href="/blog/find-deleted-reddit-posts-by-user" className="group bg-white/5 border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-colors">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-300">Find Deleted Posts by User</h3>
+                  <p className="text-white/70 text-sm">Search archived Reddit content by username</p>
+                </Link>
+                <Link href="/blog/how-to-see-deleted-reddit-comments" className="group bg-white/5 border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-colors">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-300">How to See Deleted Comments</h3>
+                  <p className="text-white/70 text-sm">Learn how comment recovery differs from posts</p>
                 </Link>
                 <Link href="/blog/reddit-privacy-and-deleted-content" className="group bg-white/5 border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-colors">
                   <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-300">Reddit Privacy & Deleted Content</h3>
-                  <p className="text-white/70 text-sm">Understanding privacy implications of content recovery</p>
+                  <p className="text-white/70 text-sm">Understand privacy implications of content recovery</p>
                 </Link>
               </div>
             </div>

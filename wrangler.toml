@@ -10,3 +10,7 @@ compatibility_date = "2024-12-20"
 [env.production.vars]
 NEXT_PUBLIC_GOOGLE_ID = "G-54FYYVSNBG"
 NODE_ENV = "production"
+SITE_URL = "https://viewdeletedreddit.com"
+DEFAULT_CUSTOMER_EMAIL = "hello@viewdeletedreddit.com"
+
+# Set STRIPE_SECRET_KEY as a Cloudflare Pages secret, not a plain text var.

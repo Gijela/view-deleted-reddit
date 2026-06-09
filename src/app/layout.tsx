@@ -84,7 +84,7 @@ export default function RootLayout({
         <meta name="msapplication-config" content="/browserconfig.xml" />
 
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7300633533186941"
-     crossorigin="anonymous"></script>
+     crossOrigin="anonymous"></script>
 
         {/* Structured Data */}
         <script
@@ -100,7 +100,7 @@ export default function RootLayout({
               "operatingSystem": "Web Browser",
               "offers": {
                 "@type": "Offer",
-                "price": "0",
+                "price": "1.99",
                 "priceCurrency": "USD"
               },
               "creator": {

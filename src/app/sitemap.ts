@@ -27,6 +27,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/blog/how-to-see-deleted-reddit-posts-2026`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/find-deleted-reddit-posts-by-user`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/deleted-reddit-account-viewer`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      url: `${baseUrl}/blog/how-to-see-deleted-reddit-comments`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      url: `${baseUrl}/blog/deleted-subreddit-archive`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/blog/ultimate-guide-view-deleted-reddit-posts`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
@@ -37,6 +67,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/reddit-privacy-and-deleted-content`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.65,
     },
     {
       url: `${baseUrl}/about`,

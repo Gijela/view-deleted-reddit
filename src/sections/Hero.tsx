@@ -147,7 +147,7 @@ export const Hero = ({ onSearch }: HeroProps) => {
             onClick={handleSearch}
             disabled={isLoading}
           >
-            {isLoading ? 'Searching...' : 'Search'}
+            {isLoading ? 'Redirecting...' : 'Pay $1.99 & Search'}
           </Button>
         </div>
 
