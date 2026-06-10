@@ -63,7 +63,7 @@ export async function createCheckoutSession(
   appendFormValue(params, 'cancel_url', `${siteUrl}/?canceled=1`);
   appendFormValue(params, 'line_items[0][quantity]', 1);
   appendFormValue(params, 'line_items[0][price_data][currency]', 'usd');
-  appendFormValue(params, 'line_items[0][price_data][unit_amount]', 199);
+  appendFormValue(params, 'line_items[0][price_data][unit_amount]', 299);
   appendFormValue(params, 'line_items[0][price_data][product_data][name]', 'ViewDeletedReddit Search');
   appendFormValue(params, 'metadata[query]', query);
 

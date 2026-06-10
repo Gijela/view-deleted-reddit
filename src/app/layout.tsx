@@ -100,7 +100,7 @@ export default function RootLayout({
               "operatingSystem": "Web Browser",
               "offers": {
                 "@type": "Offer",
-                "price": "1.99",
+                "price": "2.99",
                 "priceCurrency": "USD"
               },
               "creator": {
